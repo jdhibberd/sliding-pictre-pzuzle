@@ -1,59 +1,59 @@
 :root {
-    --font-color: purple;
+  --font-color: purple;
 }
 
 body {
-    background-color: #eeeeee;
-    font-family: 'Inclusive Sans', sans-serif;
-    display: flex;
-    flex-direction: column;
+  background-color: #eeeeee;
+  font-family: "Inclusive Sans", sans-serif;
+  display: flex;
+  flex-direction: column;
 }
 
 h1 {
-    margin: 30px 0 0 0;
-    font-size: 60px;
-    color: var(--font-color);
-    text-align: center;
+  margin: 30px 0 0 0;
+  font-size: 60px;
+  color: var(--font-color);
+  text-align: center;
 }
 
 h2 {
-    margin: 5px 0 70px 0;
-    font-size: 25px;
-    color: var(--font-color);
-    text-align: center;
+  margin: 5px 0 70px 0;
+  font-size: 25px;
+  color: var(--font-color);
+  text-align: center;
 }
 
 u {
-    text-decoration-thickness: 0.2rem;
-    text-underline-offset: 5px;
+  text-decoration-thickness: 0.2rem;
+  text-underline-offset: 5px;
 }
 
 #container {
-    display: flex;
-    text-align: center;
+  display: flex;
+  text-align: center;
 }
 
 #container > .column {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    font-size: 25px;
-    color: var(--font-color);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  font-size: 25px;
+  color: var(--font-color);
 }
 
 #container > .column > .player {
-    margin-top: 20px;
+  margin-top: 20px;
 }
 
 #container > .column > .controls {
-    margin-top: 10px;
-    display: flex;
-    justify-content: center;
-    column-gap: 10px;
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+  column-gap: 10px;
 }
 
 #container > .column > .controls > .key {
-    border: solid 1px pink;
-    border-radius: 5px;
-    padding: 6px 14px;
+  border: solid 1px pink;
+  border-radius: 5px;
+  padding: 6px 14px;
 }

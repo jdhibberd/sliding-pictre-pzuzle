@@ -1,43 +1,46 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-    <head>
-        <title>Sliding Pictre Pzuzle</title>
-        <script src="main.js"></script>
-        <link rel="stylesheet" href="main.css">
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Inclusive+Sans&display=swap" rel="stylesheet">
-    </head>
-    <body>
-        <div>
-            <h1>Sliding Pic<u>tr</u>e P<u>zu</u>zle</h1>
-            <h2>Fix your picture before your opponent fixes theirs.</h2>
+  <head>
+    <title>Sliding Pictre Pzuzle</title>
+    <script src="main.js"></script>
+    <link rel="stylesheet" href="main.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inclusive+Sans&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div>
+      <h1>Sliding Pic<u>tr</u>e P<u>zu</u>zle</h1>
+      <h2>Fix your picture before your opponent fixes theirs.</h2>
+    </div>
+    <div id="container">
+      <div class="column">
+        <div><canvas id="puzzle1"></canvas></div>
+        <div class="player">Player 1</div>
+        <div class="controls">
+          <div class="key">&#8593; w</div>
+          <div class="key">&#8595; s</div>
+          <div class="key">&#8592; a</div>
+          <div class="key">&#8594; d</div>
         </div>
-        <div id="container">
-            <div class="column">
-                <div><canvas id="puzzle1"></canvas></div>
-                <div class="player">Player 1</div>
-                <div class="controls">
-                    <div class="key">&#8593; w</div> 
-                    <div class="key">&#8595; s</div>
-                    <div class="key">&#8592; a</div> 
-                    <div class="key">&#8594; d</div>
-                </div>
-            </div>
-            <div class="column">
-                <div><canvas id="pictureActive"></canvas></div>
-                <div><canvas id="pictureInactive" hidden></canvas></div>
-            </div>
-            <div class="column">
-                <div><canvas id="puzzle2"></canvas></div>
-                <div class="player">Player 2</div>
-                <div class="controls">
-                    <div class="key">&#8593; i</div> 
-                    <div class="key">&#8595; k</div>
-                    <div class="key">&#8592; j</div> 
-                    <div class="key">&#8594; l</div>
-                </div>
-            </div>
+      </div>
+      <div class="column">
+        <div><canvas id="pictureActive"></canvas></div>
+        <div><canvas id="pictureInactive" hidden></canvas></div>
+      </div>
+      <div class="column">
+        <div><canvas id="puzzle2"></canvas></div>
+        <div class="player">Player 2</div>
+        <div class="controls">
+          <div class="key">&#8593; i</div>
+          <div class="key">&#8595; k</div>
+          <div class="key">&#8592; j</div>
+          <div class="key">&#8594; l</div>
         </div>
-    </body>
+      </div>
+    </div>
+  </body>
 </html>
