@@ -381,14 +381,14 @@ class Competition {
     }
 }
 
-window.onload = function() {
+window.addEventListener("DOMContentLoaded", function() {
     const competition = new Competition(
-        document.getElementById("pictureActive"),
-        document.getElementById("pictureInactive"),
-        document.getElementById("puzzle1"),
-        document.getElementById("puzzle2"),
+        document.querySelector("#pictureActive"),
+        document.querySelector("#pictureInactive"),
+        document.querySelector("#puzzle1"),
+        document.querySelector("#puzzle2"),
     )
-    window.onkeydown = function(event) {
+    window.addEventListener("keydown", function(event) {
         competition.onKeyDown(event)
-    }
-}
+    })
+})
