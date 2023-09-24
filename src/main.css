@@ -1,3 +1,7 @@
+:root {
+    --font-color: purple;
+}
+
 body {
     background-color: #eeeeee;
     font-family: 'Inclusive Sans', sans-serif;
@@ -8,14 +12,14 @@ body {
 h1 {
     margin: 30px 0 0 0;
     font-size: 60px;
-    color: purple;
+    color: var(--font-color);
     text-align: center;
 }
 
 h2 {
     margin: 5px 0 70px 0;
     font-size: 25px;
-    color: purple;
+    color: var(--font-color);
     text-align: center;
 }
 
@@ -34,7 +38,7 @@ u {
     display: flex;
     flex-direction: column;
     font-size: 25px;
-    color: purple;
+    color: var(--font-color);
 }
 
 #container > .column > .player {
