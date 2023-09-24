@@ -34,9 +34,9 @@ class Puzzle {
   #ctx;
 
   /**
-   * Pixel data on the source picture that the puzzle is a scrambled version 
-   * of. The puzzle has a reference to both an active and inactive version of 
-   * the picture. The inactive version is used once the competition is 
+   * Pixel data on the source picture that the puzzle is a scrambled version
+   * of. The puzzle has a reference to both an active and inactive version of
+   * the picture. The inactive version is used once the competition is
    * completed.
    */
   #pictureActiveData;
@@ -64,8 +64,8 @@ class Puzzle {
 
   /**
    * Indicate that the puzzle has been shuffled and that the user can begin
-   * attempting to solve it. This prevents the competition from being 
-   * prematurely "completed" if one of the puzzles happens to be "solved" 
+   * attempting to solve it. This prevents the competition from being
+   * prematurely "completed" if one of the puzzles happens to be "solved"
    * during the shuffle phase.
    */
   begin(onCompleted) {
@@ -144,7 +144,7 @@ class Puzzle {
    * Shift the puzzle gap indicator to a new position and move the card
    * currently in that position to the old gap indicator position.
    *
-   * We don't want to notify the competition object that the puzzle is solved 
+   * We don't want to notify the competition object that the puzzle is solved
    * during the shuffle phase.
    */
   #swapGap(getTargetRowColumn) {
@@ -198,7 +198,7 @@ class Puzzle {
   }
 
   /**
-   * Return whether the puzzle has been shifted into the original sequence, to 
+   * Return whether the puzzle has been shifted into the original sequence, to
    * match the picture.
    */
   #isCompleted() {
@@ -221,7 +221,7 @@ Puzzle.GAP_VALUE = undefined;
 Puzzle.NUM_CARDS = Puzzle.WIDTH * Puzzle.HEIGHT;
 
 /**
- * Shuffles a list of puzzles randomly, but in the same way to create an equal 
+ * Shuffles a list of puzzles randomly, but in the same way to create an equal
  * challenge for all players.
  */
 class Shuffler {
@@ -252,8 +252,8 @@ Shuffler.SHIFTS_PER_SHUFFLE = 100;
 
 class Competition {
   /**
-   * Draw the source picture that needs to be solved as part of the puzzle, in 
-   * either its active or inactive form. Returns image data for the picture 
+   * Draw the source picture that needs to be solved as part of the puzzle, in
+   * either its active or inactive form. Returns image data for the picture
    * which is then referenced by each puzzle.
    */
   static drawPicture(canvas, isActive) {
@@ -276,7 +276,7 @@ class Competition {
   }
 
   /**
-   * Whether either of the puzzles has been completed, and the competition is 
+   * Whether either of the puzzles has been completed, and the competition is
    * over.
    */
   #isCompleted = false;
