@@ -5,8 +5,13 @@
   "customizations": {
     "vscode": {
       "settings": {
-        "editor.rulers": [80]
-      }
+        "editor.rulers": [80],
+        "[javascript]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode",
+          "editor.formatOnSave": true
+        }
+      },
+      "extensions": ["esbenp.prettier-vscode"]
     }
   }
 }

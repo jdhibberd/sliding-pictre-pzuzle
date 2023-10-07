@@ -10,8 +10,8 @@ After having not programmed in JavaScript for many years I decided to get back i
 
 Just download `build\sliding-pictre-pzuzle.html` and run it locally in a browser.
 
-Because it uses ES6 syntax you should use a modern browser, like Chrome (I wanted to avoid having to deal with transpilers). 
+Because it uses ES6 syntax you should use a modern browser, like Chrome (I wanted to avoid having to deal with transpilers).
 
 ## To develop
 
-The entire game consists of only 3 files (HTML, CSS, and JavaScript), all found in `src`. Make modifications to any of these files then run `node build.js` to rebuild the "HTML" file bundle in `build`. 
+The entire game consists of only 3 files (HTML, CSS, and JavaScript), all found in `src`. Make modifications to any of these files then run `node build.js` to rebuild the "HTML" file bundle in `dist`.

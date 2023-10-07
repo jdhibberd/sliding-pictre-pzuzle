@@ -11,7 +11,7 @@ const injectFile = function (output, tag, path) {
 };
 
 const output = (function () {
-  const stream = fs.createWriteStream("build/sliding-pictre-pzuzle.html");
+  const stream = fs.createWriteStream("dist/sliding-pictre-pzuzle.html");
   return function (content, indent) {
     stream.write(" ".repeat(indent) + content);
   };
