@@ -3,382 +3,306 @@
   <head>
     <title>Sliding Pictre Pzuzle</title>
     <script>
+      "use strict";
+      var __classPrivateFieldSet = (this && this.__classPrivateFieldSet) || function (receiver, state, value, kind, f) {
+          if (kind === "m") throw new TypeError("Private method is not writable");
+          if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a setter");
+          if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot write private member to an object whose class did not declare it");
+          return (kind === "a" ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value)), value;
+      };
+      var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (receiver, state, kind, f) {
+          if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
+          if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
+          return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
+      };
+      var _Puzzle_instances, _a, _Puzzle_cards, _Puzzle_gapIndex, _Puzzle_canvas, _Puzzle_ctx, _Puzzle_pictureActiveData, _Puzzle_pictureInactiveData, _Puzzle_onCompleted, _Puzzle_drawCard, _Puzzle_getRowColumnFromIndex, _Puzzle_getPointFromRowColumn, _Puzzle_swapGap, _Puzzle_isCompleted, _Shuffler_puzzles, _Competition_isCompleted, _Competition_puzzle1, _Competition_puzzle2;
       /**
        * A single puzzle (for a specific player) within the competition.
        */
       class Puzzle {
-        /**
-         * Return the width, in pixels, of the picture.
-         */
-        static getWidth() {
-          return (Puzzle.CARD_SIZE + Puzzle.CARD_PADDING) * Puzzle.WIDTH - 1;
-        }
-      
-        /**
-         * Return the height, in pixels, of the picture.
-         */
-        static getHeight() {
-          return (Puzzle.CARD_SIZE + Puzzle.CARD_PADDING) * Puzzle.HEIGHT - 1;
-        }
-      
-        /**
-         * The array of cards that make up the puzzle.
-         */
-        #cards;
-      
-        /**
-         * The index of the missing card ("the gap") that allows cards to be
-         * shifted.
-         */
-        #gapIndex;
-      
-        /**
-         * HTML Canvas element (and context), used for drawing.
-         */
-        #canvas;
-        #ctx;
-      
-        /**
-         * Pixel data on the source picture that the puzzle is a scrambled version
-         * of. The puzzle has a reference to both an active and inactive version of
-         * the picture. The inactive version is used once the competition is
-         * completed.
-         */
-        #pictureActiveData;
-        #pictureInactiveData;
-      
-        /**
-         * Callback for when puzzle is completed.
-         */
-        #onCompleted;
-      
-        constructor(canvas, pictureActiveData, pictureInactiveData) {
-          this.#canvas = canvas;
-          this.#canvas.width = Puzzle.getWidth();
-          this.#canvas.height = Puzzle.getHeight();
-          this.#pictureActiveData = pictureActiveData;
-          this.#pictureInactiveData = pictureInactiveData;
-          this.#ctx = this.#canvas.getContext("2d");
-          this.#cards = new Array(Puzzle.NUM_CARDS);
-          for (let i = 0; i < Puzzle.NUM_CARDS; i++) {
-            this.#cards[i] = i;
+          /**
+           * Return the width, in pixels, of the picture.
+           */
+          static getWidth() {
+              return (_a.CARD_SIZE + _a.CARD_PADDING) * _a.WIDTH - 1;
           }
-          this.#gapIndex = Puzzle.NUM_CARDS - 1; // gap is always bottom-right card
-          this.#cards[this.#gapIndex] = Puzzle.GAP_VALUE;
-        }
-      
-        /**
-         * Indicate that the puzzle has been shuffled and that the user can begin
-         * attempting to solve it. This prevents the competition from being
-         * prematurely "completed" if one of the puzzles happens to be "solved"
-         * during the shuffle phase.
-         */
-        begin(onCompleted) {
-          this.#onCompleted = onCompleted;
-          this.draw(true);
-        }
-      
-        /**
-         * Draw the current puzzle state to the canvas, erasing any existing
-         * puzzle state.
-         */
-        draw(isActive) {
-          for (let i = 0; i < Puzzle.NUM_CARDS; i++) {
-            this.#drawCard(i, isActive);
+          /**
+           * Return the height, in pixels, of the picture.
+           */
+          static getHeight() {
+              return (_a.CARD_SIZE + _a.CARD_PADDING) * _a.HEIGHT - 1;
           }
-        }
-      
-        /**
-         * Draw a single card (within a puzzle) to the canvas. The card to be
-         * drawn is at index position `i` in the puzzle.
-         */
-        #drawCard(i, isActive) {
-          const drawRowColumn = this.#getRowColumnFromIndex(i);
-          const drawPoint = this.#getPointFromRowColumn(drawRowColumn);
-          const sourceIndex = this.#cards[i];
-      
-          if (sourceIndex === Puzzle.GAP_VALUE) {
-            this.#ctx.clearRect(
-              drawPoint.x,
-              drawPoint.y,
-              Puzzle.CARD_SIZE,
-              Puzzle.CARD_SIZE,
-            );
-          } else {
-            const sourceRowColumn = this.#getRowColumnFromIndex(sourceIndex);
-            const sourcePoint = this.#getPointFromRowColumn(sourceRowColumn);
-            this.#ctx.putImageData(
-              isActive ? this.#pictureActiveData : this.#pictureInactiveData,
+          constructor(canvas, pictureActiveData, pictureInactiveData) {
+              _Puzzle_instances.add(this);
+              /**
+               * The array of cards that make up the puzzle.
+               */
+              _Puzzle_cards.set(this, void 0);
+              /**
+               * The index of the missing card ("the gap") that allows cards to be
+               * shifted.
+               */
+              _Puzzle_gapIndex.set(this, void 0);
+              /**
+               * HTML Canvas element (and context), used for drawing.
+               */
+              _Puzzle_canvas.set(this, void 0);
+              _Puzzle_ctx.set(this, void 0);
+              /**
+               * Pixel data on the source picture that the puzzle is a scrambled version
+               * of. The puzzle has a reference to both an active and inactive version of
+               * the picture. The inactive version is used once the competition is
+               * completed.
+               */
+              _Puzzle_pictureActiveData.set(this, void 0);
+              _Puzzle_pictureInactiveData.set(this, void 0);
+              /**
+               * Callback for when puzzle is completed.
+               */
+              _Puzzle_onCompleted.set(this, void 0);
+              __classPrivateFieldSet(this, _Puzzle_canvas, canvas, "f");
+              __classPrivateFieldGet(this, _Puzzle_canvas, "f").width = _a.getWidth();
+              __classPrivateFieldGet(this, _Puzzle_canvas, "f").height = _a.getHeight();
+              __classPrivateFieldSet(this, _Puzzle_pictureActiveData, pictureActiveData, "f");
+              __classPrivateFieldSet(this, _Puzzle_pictureInactiveData, pictureInactiveData, "f");
+              const ctx = __classPrivateFieldGet(this, _Puzzle_canvas, "f").getContext("2d");
+              if (ctx === null)
+                  throw "Failed to get canvas context.";
+              __classPrivateFieldSet(this, _Puzzle_ctx, ctx, "f");
+              __classPrivateFieldSet(this, _Puzzle_cards, new Array(_a.NUM_CARDS), "f");
+              for (let i = 0; i < _a.NUM_CARDS; i++) {
+                  __classPrivateFieldGet(this, _Puzzle_cards, "f")[i] = i;
+              }
+              __classPrivateFieldSet(this, _Puzzle_gapIndex, _a.NUM_CARDS - 1, "f"); // gap is always bottom-right card
+              __classPrivateFieldGet(this, _Puzzle_cards, "f")[__classPrivateFieldGet(this, _Puzzle_gapIndex, "f")] = _a.GAP_VALUE;
+          }
+          /**
+           * Indicate that the puzzle has been shuffled and that the user can begin
+           * attempting to solve it. This prevents the competition from being
+           * prematurely "completed" if one of the puzzles happens to be "solved"
+           * during the shuffle phase.
+           */
+          begin(onCompleted) {
+              __classPrivateFieldSet(this, _Puzzle_onCompleted, onCompleted, "f");
+              this.draw(true);
+          }
+          /**
+           * Draw the current puzzle state to the canvas, erasing any existing
+           * puzzle state.
+           */
+          draw(isActive) {
+              for (let i = 0; i < _a.NUM_CARDS; i++) {
+                  __classPrivateFieldGet(this, _Puzzle_instances, "m", _Puzzle_drawCard).call(this, i, isActive);
+              }
+          }
+          /**
+           * Shift the card immediately above the gap indicator down.
+           */
+          shiftDown() {
+              __classPrivateFieldGet(this, _Puzzle_instances, "m", _Puzzle_swapGap).call(this, (row, column) => (row > 0 ? [row - 1, column] : null));
+          }
+          /**
+           * Shift the card immediately below the gap indicator up.
+           */
+          shiftUp() {
+              __classPrivateFieldGet(this, _Puzzle_instances, "m", _Puzzle_swapGap).call(this, (row, column) => row < _a.HEIGHT - 1 ? [row + 1, column] : null);
+          }
+          /**
+           * Shift the card immediately left the gap indicator up.
+           */
+          shiftRight() {
+              __classPrivateFieldGet(this, _Puzzle_instances, "m", _Puzzle_swapGap).call(this, (row, column) => (column > 0 ? [row, column - 1] : null));
+          }
+          /**
+           * Shift the card immediately right the gap indicator up.
+           */
+          shiftLeft() {
+              __classPrivateFieldGet(this, _Puzzle_instances, "m", _Puzzle_swapGap).call(this, (row, column) => column < _a.WIDTH - 1 ? [row, column + 1] : null);
+          }
+      }
+      _a = Puzzle, _Puzzle_cards = new WeakMap(), _Puzzle_gapIndex = new WeakMap(), _Puzzle_canvas = new WeakMap(), _Puzzle_ctx = new WeakMap(), _Puzzle_pictureActiveData = new WeakMap(), _Puzzle_pictureInactiveData = new WeakMap(), _Puzzle_onCompleted = new WeakMap(), _Puzzle_instances = new WeakSet(), _Puzzle_drawCard = function _Puzzle_drawCard(i, isActive) {
+          const drawRowColumn = __classPrivateFieldGet(this, _Puzzle_instances, "m", _Puzzle_getRowColumnFromIndex).call(this, i);
+          const drawPoint = __classPrivateFieldGet(this, _Puzzle_instances, "m", _Puzzle_getPointFromRowColumn).call(this, drawRowColumn);
+          const sourceIndex = __classPrivateFieldGet(this, _Puzzle_cards, "f")[i];
+          if (sourceIndex === _a.GAP_VALUE) {
+              __classPrivateFieldGet(this, _Puzzle_ctx, "f").clearRect(drawPoint.x, drawPoint.y, _a.CARD_SIZE, _a.CARD_SIZE);
+          }
+          else {
+              const sourceRowColumn = __classPrivateFieldGet(this, _Puzzle_instances, "m", _Puzzle_getRowColumnFromIndex).call(this, sourceIndex);
+              const sourcePoint = __classPrivateFieldGet(this, _Puzzle_instances, "m", _Puzzle_getPointFromRowColumn).call(this, sourceRowColumn);
+              __classPrivateFieldGet(this, _Puzzle_ctx, "f").putImageData(isActive ? __classPrivateFieldGet(this, _Puzzle_pictureActiveData, "f") : __classPrivateFieldGet(this, _Puzzle_pictureInactiveData, "f"), 
               // Offset `drawPoint` coordinates by `sourcePoint` coordinates so
               // that the visible part of the source picture being draw is at
               // `drawPoint`, because `putImageData` will include buffer for non
               // visible parts of the source picture.
-              drawPoint.x - sourcePoint.x,
-              drawPoint.y - sourcePoint.y,
-              sourcePoint.x,
-              sourcePoint.y,
-              Puzzle.CARD_SIZE,
-              Puzzle.CARD_SIZE,
-            );
+              drawPoint.x - sourcePoint.x, drawPoint.y - sourcePoint.y, sourcePoint.x, sourcePoint.y, _a.CARD_SIZE, _a.CARD_SIZE);
           }
-        }
-      
-        /**
-         * Get the row and column position of a card within the puzzle given its
-         * index.
-         */
-        #getRowColumnFromIndex(i) {
+      }, _Puzzle_getRowColumnFromIndex = function _Puzzle_getRowColumnFromIndex(i) {
           return [
-            Math.floor(i / Puzzle.WIDTH), // row
-            i % Puzzle.WIDTH, // column
+              Math.floor(i / _a.WIDTH),
+              i % _a.WIDTH, // column
           ];
-        }
-      
-        /**
-         * Return pixel coordinates of the top-left point of the card at the grid
-         * position indicated by `row` and `column`.
-         */
-        #getPointFromRowColumn([row, column]) {
+      }, _Puzzle_getPointFromRowColumn = function _Puzzle_getPointFromRowColumn([row, column]) {
           return {
-            x: column * (Puzzle.CARD_SIZE + Puzzle.CARD_PADDING),
-            y: row * (Puzzle.CARD_SIZE + Puzzle.CARD_PADDING),
+              x: column * (_a.CARD_SIZE + _a.CARD_PADDING),
+              y: row * (_a.CARD_SIZE + _a.CARD_PADDING),
           };
-        }
-      
-        /**
-         * Shift the puzzle gap indicator to a new position and move the card
-         * currently in that position to the old gap indicator position.
-         *
-         * We don't want to notify the competition object that the puzzle is solved
-         * during the shuffle phase.
-         */
-        #swapGap(getTargetRowColumn) {
-          const [gapRow, gapColumn] = this.#getRowColumnFromIndex(this.#gapIndex);
+      }, _Puzzle_swapGap = function _Puzzle_swapGap(getTargetRowColumn) {
+          const [gapRow, gapColumn] = __classPrivateFieldGet(this, _Puzzle_instances, "m", _Puzzle_getRowColumnFromIndex).call(this, __classPrivateFieldGet(this, _Puzzle_gapIndex, "f"));
           const targetRowColumn = getTargetRowColumn(gapRow, gapColumn);
           if (targetRowColumn === null) {
-            return; // out-of-bounds shift
+              return; // out-of-bounds shift
           }
           const [targetRow, targetColumn] = targetRowColumn;
-          const targetIndex = targetRow * Puzzle.WIDTH + targetColumn;
-          this.#cards[this.#gapIndex] = this.#cards[targetIndex];
-          this.#cards[targetIndex] = Puzzle.GAP_VALUE;
-          this.#drawCard(this.#gapIndex, true);
-          this.#drawCard(targetIndex, true);
-          this.#gapIndex = targetIndex;
-          if (this.#onCompleted !== undefined && this.#isCompleted()) {
-            this.#onCompleted();
+          const targetIndex = targetRow * _a.WIDTH + targetColumn;
+          __classPrivateFieldGet(this, _Puzzle_cards, "f")[__classPrivateFieldGet(this, _Puzzle_gapIndex, "f")] = __classPrivateFieldGet(this, _Puzzle_cards, "f")[targetIndex];
+          __classPrivateFieldGet(this, _Puzzle_cards, "f")[targetIndex] = _a.GAP_VALUE;
+          __classPrivateFieldGet(this, _Puzzle_instances, "m", _Puzzle_drawCard).call(this, __classPrivateFieldGet(this, _Puzzle_gapIndex, "f"), true);
+          __classPrivateFieldGet(this, _Puzzle_instances, "m", _Puzzle_drawCard).call(this, targetIndex, true);
+          __classPrivateFieldSet(this, _Puzzle_gapIndex, targetIndex, "f");
+          if (__classPrivateFieldGet(this, _Puzzle_onCompleted, "f") !== undefined && __classPrivateFieldGet(this, _Puzzle_instances, "m", _Puzzle_isCompleted).call(this)) {
+              __classPrivateFieldGet(this, _Puzzle_onCompleted, "f").call(this);
           }
-        }
-      
-        /**
-         * Shift the card immediately above the gap indicator down.
-         */
-        shiftDown() {
-          this.#swapGap((row, column) => (row > 0 ? [row - 1, column] : null));
-        }
-      
-        /**
-         * Shift the card immediately below the gap indicator up.
-         */
-        shiftUp() {
-          this.#swapGap((row, column) =>
-            row < Puzzle.HEIGHT - 1 ? [row + 1, column] : null,
-          );
-        }
-      
-        /**
-         * Shift the card immediately left the gap indicator up.
-         */
-        shiftRight() {
-          this.#swapGap((row, column) => (column > 0 ? [row, column - 1] : null));
-        }
-      
-        /**
-         * Shift the card immediately right the gap indicator up.
-         */
-        shiftLeft() {
-          this.#swapGap((row, column) =>
-            column < Puzzle.WIDTH - 1 ? [row, column + 1] : null,
-          );
-        }
-      
-        /**
-         * Return whether the puzzle has been shifted into the original sequence, to
-         * match the picture.
-         */
-        #isCompleted() {
+      }, _Puzzle_isCompleted = function _Puzzle_isCompleted() {
           // we don't need to check the last card which, if all the
           // others are correctly sorted, will be the gap value
-          for (let i = 0; i < Puzzle.NUM_CARDS - 1; i++) {
-            if (this.#cards[i] !== i) {
-              return false;
-            }
+          for (let i = 0; i < _a.NUM_CARDS - 1; i++) {
+              if (__classPrivateFieldGet(this, _Puzzle_cards, "f")[i] !== i) {
+                  return false;
+              }
           }
           return true;
-        }
-      }
-      
+      };
       Puzzle.CARD_SIZE = 70;
       Puzzle.CARD_PADDING = 1;
       Puzzle.WIDTH = 4;
       Puzzle.HEIGHT = 3;
-      Puzzle.GAP_VALUE = undefined;
-      Puzzle.NUM_CARDS = Puzzle.WIDTH * Puzzle.HEIGHT;
-      
+      Puzzle.GAP_VALUE = -1;
+      Puzzle.NUM_CARDS = _a.WIDTH * _a.HEIGHT;
       /**
        * Shuffles a list of puzzles randomly, but in the same way to create an equal
        * challenge for all players.
        */
       class Shuffler {
-        /**
-         * An array of the two puzzle objects that are part of the competition.
-         */
-        #puzzles;
-      
-        constructor(...puzzles) {
-          this.#puzzles = puzzles;
-        }
-      
-        shuffle() {
-          const shifts = [
-            Puzzle.prototype.shiftDown,
-            Puzzle.prototype.shiftUp,
-            Puzzle.prototype.shiftLeft,
-            Puzzle.prototype.shiftRight,
-          ];
-          for (let i = 0; i < Shuffler.SHIFTS_PER_SHUFFLE; i++) {
-            const randomShift = shifts[Math.floor(Math.random() * shifts.length)];
-            this.#puzzles.map((puzzle) => randomShift.call(puzzle));
+          constructor(...puzzles) {
+              /**
+               * An array of the two puzzle objects that are part of the competition.
+               */
+              _Shuffler_puzzles.set(this, void 0);
+              __classPrivateFieldSet(this, _Shuffler_puzzles, puzzles, "f");
           }
-        }
+          shuffle() {
+              const shifts = [
+                  Puzzle.prototype.shiftDown,
+                  Puzzle.prototype.shiftUp,
+                  Puzzle.prototype.shiftLeft,
+                  Puzzle.prototype.shiftRight,
+              ];
+              for (let i = 0; i < Shuffler.SHIFTS_PER_SHUFFLE; i++) {
+                  const randomShift = shifts[Math.floor(Math.random() * shifts.length)];
+                  __classPrivateFieldGet(this, _Shuffler_puzzles, "f").map((puzzle) => randomShift.call(puzzle));
+              }
+          }
       }
-      
+      _Shuffler_puzzles = new WeakMap();
       Shuffler.SHIFTS_PER_SHUFFLE = 100;
-      
       class Competition {
-        /**
-         * Draw the source picture that needs to be solved as part of the puzzle, in
-         * either its active or inactive form. Returns image data for the picture
-         * which is then referenced by each puzzle.
-         */
-        static drawPicture(canvas, isActive) {
-          const w = (canvas.width = Puzzle.getWidth());
-          const h = (canvas.height = Puzzle.getHeight());
-          const ctx = canvas.getContext("2d");
-          if (!isActive) {
-            ctx.globalAlpha = 0.2;
+          /**
+           * Draw the source picture that needs to be solved as part of the puzzle, in
+           * either its active or inactive form. Returns image data for the picture
+           * which is then referenced by each puzzle.
+           */
+          static drawPicture(canvas, isActive) {
+              const w = (canvas.width = Puzzle.getWidth());
+              const h = (canvas.height = Puzzle.getHeight());
+              const ctx = canvas.getContext("2d");
+              if (ctx === null)
+                  throw "Failed to get canvas context.";
+              if (!isActive) {
+                  ctx.globalAlpha = 0.2;
+              }
+              ctx.fillStyle = "pink";
+              ctx.fillRect(0, 0, w, h);
+              let gradient = ctx.createLinearGradient(0, 0, w, h);
+              gradient.addColorStop(0, "red");
+              gradient.addColorStop(1, "purple");
+              ctx.fillStyle = gradient;
+              ctx.beginPath();
+              ctx.arc(w / 2, h / 2, h / 2.5, 0, 2 * Math.PI);
+              ctx.fill();
+              return ctx.getImageData(0, 0, w, h);
           }
-          ctx.fillStyle = "pink";
-          ctx.fillRect(0, 0, w, h);
-          let gradient = ctx.createLinearGradient(0, 0, w, h);
-          gradient.addColorStop(0, "red");
-          gradient.addColorStop(1, "purple");
-          ctx.fillStyle = gradient;
-          ctx.beginPath();
-          ctx.arc(w / 2, h / 2, h / 2.5, 0, 2 * Math.PI);
-          ctx.fill();
-          return ctx.getImageData(0, 0, w, h);
-        }
-      
-        /**
-         * Whether either of the puzzles has been completed, and the competition is
-         * over.
-         */
-        #isCompleted = false;
-      
-        /**
-         * The two puzzles that make up the competition.
-         */
-        #puzzle1;
-        #puzzle2;
-      
-        constructor(
-          pictureActiveCanvas,
-          pictureInactiveCanvas,
-          puzzle1Canvas,
-          puzzle2Canvas,
-        ) {
-          const pictureActiveData = Competition.drawPicture(
-            pictureActiveCanvas,
-            true,
-          );
-          const pictureInactiveData = Competition.drawPicture(
-            pictureInactiveCanvas,
-            false,
-          );
-          this.#puzzle1 = new Puzzle(
-            puzzle1Canvas,
-            pictureActiveData,
-            pictureInactiveData,
-          );
-          this.#puzzle2 = new Puzzle(
-            puzzle2Canvas,
-            pictureActiveData,
-            pictureInactiveData,
-          );
-          new Shuffler(this.#puzzle1, this.#puzzle2).shuffle();
-          this.#puzzle1.begin(() => {
-            this.onPuzzleCompleted(this.#puzzle2);
-          });
-          this.#puzzle2.begin(() => {
-            this.onPuzzleCompleted(this.#puzzle1);
-          });
-        }
-      
-        /**
-         * Stop the competition when one of the puzzles is solved.
-         */
-        onPuzzleCompleted(incompletedPuzzle) {
-          this.#isCompleted = true;
-          incompletedPuzzle.draw(false);
-        }
-      
-        /**
-         * Shift the cards of each puzzle in response to the user's keyboard input.
-         */
-        onKeyDown(event) {
-          if (this.#isCompleted === true) {
-            return;
+          constructor(pictureActiveCanvas, pictureInactiveCanvas, puzzle1Canvas, puzzle2Canvas) {
+              /**
+               * Whether either of the puzzles has been completed, and the competition is
+               * over.
+               */
+              _Competition_isCompleted.set(this, false);
+              /**
+               * The two puzzles that make up the competition.
+               */
+              _Competition_puzzle1.set(this, void 0);
+              _Competition_puzzle2.set(this, void 0);
+              const pictureActiveData = Competition.drawPicture(pictureActiveCanvas, true);
+              const pictureInactiveData = Competition.drawPicture(pictureInactiveCanvas, false);
+              __classPrivateFieldSet(this, _Competition_puzzle1, new Puzzle(puzzle1Canvas, pictureActiveData, pictureInactiveData), "f");
+              __classPrivateFieldSet(this, _Competition_puzzle2, new Puzzle(puzzle2Canvas, pictureActiveData, pictureInactiveData), "f");
+              new Shuffler(__classPrivateFieldGet(this, _Competition_puzzle1, "f"), __classPrivateFieldGet(this, _Competition_puzzle2, "f")).shuffle();
+              __classPrivateFieldGet(this, _Competition_puzzle1, "f").begin(() => {
+                  this.onPuzzleCompleted(__classPrivateFieldGet(this, _Competition_puzzle2, "f"));
+              });
+              __classPrivateFieldGet(this, _Competition_puzzle2, "f").begin(() => {
+                  this.onPuzzleCompleted(__classPrivateFieldGet(this, _Competition_puzzle1, "f"));
+              });
           }
-          switch (event.key) {
-            case "w":
-              this.#puzzle1.shiftUp();
-              break;
-            case "d":
-              this.#puzzle1.shiftRight();
-              break;
-            case "s":
-              this.#puzzle1.shiftDown();
-              break;
-            case "a":
-              this.#puzzle1.shiftLeft();
-              break;
-            case "i":
-              this.#puzzle2.shiftUp();
-              break;
-            case "l":
-              this.#puzzle2.shiftRight();
-              break;
-            case "k":
-              this.#puzzle2.shiftDown();
-              break;
-            case "j":
-              this.#puzzle2.shiftLeft();
-              break;
+          /**
+           * Stop the competition when one of the puzzles is solved.
+           */
+          onPuzzleCompleted(incompletedPuzzle) {
+              __classPrivateFieldSet(this, _Competition_isCompleted, true, "f");
+              incompletedPuzzle.draw(false);
           }
-        }
+          /**
+           * Shift the cards of each puzzle in response to the user's keyboard input.
+           */
+          onKeyDown(event) {
+              if (__classPrivateFieldGet(this, _Competition_isCompleted, "f") === true) {
+                  return;
+              }
+              switch (event.key) {
+                  case "w":
+                      __classPrivateFieldGet(this, _Competition_puzzle1, "f").shiftUp();
+                      break;
+                  case "d":
+                      __classPrivateFieldGet(this, _Competition_puzzle1, "f").shiftRight();
+                      break;
+                  case "s":
+                      __classPrivateFieldGet(this, _Competition_puzzle1, "f").shiftDown();
+                      break;
+                  case "a":
+                      __classPrivateFieldGet(this, _Competition_puzzle1, "f").shiftLeft();
+                      break;
+                  case "i":
+                      __classPrivateFieldGet(this, _Competition_puzzle2, "f").shiftUp();
+                      break;
+                  case "l":
+                      __classPrivateFieldGet(this, _Competition_puzzle2, "f").shiftRight();
+                      break;
+                  case "k":
+                      __classPrivateFieldGet(this, _Competition_puzzle2, "f").shiftDown();
+                      break;
+                  case "j":
+                      __classPrivateFieldGet(this, _Competition_puzzle2, "f").shiftLeft();
+                      break;
+              }
+          }
       }
-      
+      _Competition_isCompleted = new WeakMap(), _Competition_puzzle1 = new WeakMap(), _Competition_puzzle2 = new WeakMap();
       window.addEventListener("DOMContentLoaded", function () {
-        const competition = new Competition(
-          document.querySelector("#pictureActive"),
-          document.querySelector("#pictureInactive"),
-          document.querySelector("#puzzle1"),
-          document.querySelector("#puzzle2"),
-        );
-        window.addEventListener("keydown", function (event) {
-          competition.onKeyDown(event);
-        });
+          const competition = new Competition(document.querySelector("#pictureActive"), document.querySelector("#pictureInactive"), document.querySelector("#puzzle1"), document.querySelector("#puzzle2"));
+          window.addEventListener("keydown", function (event) {
+              competition.onKeyDown(event);
+          });
       });
       
     </script>

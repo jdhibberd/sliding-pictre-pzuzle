@@ -26,7 +26,7 @@ template.on("line", (line) => {
       injectFile(output, "style", "src/main.css");
       break;
     case '<script src="main.js"></script>':
-      injectFile(output, "script", "src/main.js");
+      injectFile(output, "script", "build/main.js");
       break;
     default:
       output(line + "\n");

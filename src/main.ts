@@ -2,36 +2,43 @@
  * A single puzzle (for a specific player) within the competition.
  */
 class Puzzle {
+  static CARD_SIZE = 70;
+  static CARD_PADDING = 1;
+  static WIDTH = 4;
+  static HEIGHT = 3;
+  static GAP_VALUE = -1;
+  static NUM_CARDS = Puzzle.WIDTH * Puzzle.HEIGHT;
+
   /**
    * Return the width, in pixels, of the picture.
    */
-  static getWidth() {
+  static getWidth(): number {
     return (Puzzle.CARD_SIZE + Puzzle.CARD_PADDING) * Puzzle.WIDTH - 1;
   }
 
   /**
    * Return the height, in pixels, of the picture.
    */
-  static getHeight() {
+  static getHeight(): number {
     return (Puzzle.CARD_SIZE + Puzzle.CARD_PADDING) * Puzzle.HEIGHT - 1;
   }
 
   /**
    * The array of cards that make up the puzzle.
    */
-  #cards;
+  #cards: number[];
 
   /**
    * The index of the missing card ("the gap") that allows cards to be
    * shifted.
    */
-  #gapIndex;
+  #gapIndex: number;
 
   /**
    * HTML Canvas element (and context), used for drawing.
    */
-  #canvas;
-  #ctx;
+  #canvas: HTMLCanvasElement;
+  #ctx: CanvasRenderingContext2D;
 
   /**
    * Pixel data on the source picture that the puzzle is a scrambled version
@@ -39,21 +46,27 @@ class Puzzle {
    * the picture. The inactive version is used once the competition is
    * completed.
    */
-  #pictureActiveData;
-  #pictureInactiveData;
+  #pictureActiveData: ImageData;
+  #pictureInactiveData: ImageData;
 
   /**
    * Callback for when puzzle is completed.
    */
-  #onCompleted;
+  #onCompleted?: () => void;
 
-  constructor(canvas, pictureActiveData, pictureInactiveData) {
+  constructor(
+    canvas: HTMLCanvasElement,
+    pictureActiveData: ImageData,
+    pictureInactiveData: ImageData,
+  ) {
     this.#canvas = canvas;
     this.#canvas.width = Puzzle.getWidth();
     this.#canvas.height = Puzzle.getHeight();
     this.#pictureActiveData = pictureActiveData;
     this.#pictureInactiveData = pictureInactiveData;
-    this.#ctx = this.#canvas.getContext("2d");
+    const ctx = this.#canvas.getContext("2d");
+    if (ctx === null) throw "Failed to get canvas context.";
+    this.#ctx = ctx;
     this.#cards = new Array(Puzzle.NUM_CARDS);
     for (let i = 0; i < Puzzle.NUM_CARDS; i++) {
       this.#cards[i] = i;
@@ -68,7 +81,7 @@ class Puzzle {
    * prematurely "completed" if one of the puzzles happens to be "solved"
    * during the shuffle phase.
    */
-  begin(onCompleted) {
+  begin(onCompleted: () => void): void {
     this.#onCompleted = onCompleted;
     this.draw(true);
   }
@@ -77,7 +90,7 @@ class Puzzle {
    * Draw the current puzzle state to the canvas, erasing any existing
    * puzzle state.
    */
-  draw(isActive) {
+  draw(isActive: boolean): void {
     for (let i = 0; i < Puzzle.NUM_CARDS; i++) {
       this.#drawCard(i, isActive);
     }
@@ -87,7 +100,7 @@ class Puzzle {
    * Draw a single card (within a puzzle) to the canvas. The card to be
    * drawn is at index position `i` in the puzzle.
    */
-  #drawCard(i, isActive) {
+  #drawCard(i: number, isActive: boolean): void {
     const drawRowColumn = this.#getRowColumnFromIndex(i);
     const drawPoint = this.#getPointFromRowColumn(drawRowColumn);
     const sourceIndex = this.#cards[i];
@@ -122,7 +135,7 @@ class Puzzle {
    * Get the row and column position of a card within the puzzle given its
    * index.
    */
-  #getRowColumnFromIndex(i) {
+  #getRowColumnFromIndex(i: number): [number, number] {
     return [
       Math.floor(i / Puzzle.WIDTH), // row
       i % Puzzle.WIDTH, // column
@@ -133,7 +146,10 @@ class Puzzle {
    * Return pixel coordinates of the top-left point of the card at the grid
    * position indicated by `row` and `column`.
    */
-  #getPointFromRowColumn([row, column]) {
+  #getPointFromRowColumn([row, column]: [number, number]): {
+    x: number;
+    y: number;
+  } {
     return {
       x: column * (Puzzle.CARD_SIZE + Puzzle.CARD_PADDING),
       y: row * (Puzzle.CARD_SIZE + Puzzle.CARD_PADDING),
@@ -147,7 +163,12 @@ class Puzzle {
    * We don't want to notify the competition object that the puzzle is solved
    * during the shuffle phase.
    */
-  #swapGap(getTargetRowColumn) {
+  #swapGap(
+    getTargetRowColumn: (
+      row: number,
+      column: number,
+    ) => [number, number] | null,
+  ): void {
     const [gapRow, gapColumn] = this.#getRowColumnFromIndex(this.#gapIndex);
     const targetRowColumn = getTargetRowColumn(gapRow, gapColumn);
     if (targetRowColumn === null) {
@@ -168,14 +189,14 @@ class Puzzle {
   /**
    * Shift the card immediately above the gap indicator down.
    */
-  shiftDown() {
+  shiftDown(): void {
     this.#swapGap((row, column) => (row > 0 ? [row - 1, column] : null));
   }
 
   /**
    * Shift the card immediately below the gap indicator up.
    */
-  shiftUp() {
+  shiftUp(): void {
     this.#swapGap((row, column) =>
       row < Puzzle.HEIGHT - 1 ? [row + 1, column] : null,
     );
@@ -184,14 +205,14 @@ class Puzzle {
   /**
    * Shift the card immediately left the gap indicator up.
    */
-  shiftRight() {
+  shiftRight(): void {
     this.#swapGap((row, column) => (column > 0 ? [row, column - 1] : null));
   }
 
   /**
    * Shift the card immediately right the gap indicator up.
    */
-  shiftLeft() {
+  shiftLeft(): void {
     this.#swapGap((row, column) =>
       column < Puzzle.WIDTH - 1 ? [row, column + 1] : null,
     );
@@ -201,7 +222,7 @@ class Puzzle {
    * Return whether the puzzle has been shifted into the original sequence, to
    * match the picture.
    */
-  #isCompleted() {
+  #isCompleted(): boolean {
     // we don't need to check the last card which, if all the
     // others are correctly sorted, will be the gap value
     for (let i = 0; i < Puzzle.NUM_CARDS - 1; i++) {
@@ -213,28 +234,23 @@ class Puzzle {
   }
 }
 
-Puzzle.CARD_SIZE = 70;
-Puzzle.CARD_PADDING = 1;
-Puzzle.WIDTH = 4;
-Puzzle.HEIGHT = 3;
-Puzzle.GAP_VALUE = undefined;
-Puzzle.NUM_CARDS = Puzzle.WIDTH * Puzzle.HEIGHT;
-
 /**
  * Shuffles a list of puzzles randomly, but in the same way to create an equal
  * challenge for all players.
  */
 class Shuffler {
+  static SHIFTS_PER_SHUFFLE = 100;
+
   /**
    * An array of the two puzzle objects that are part of the competition.
    */
-  #puzzles;
+  #puzzles: Puzzle[];
 
-  constructor(...puzzles) {
+  constructor(...puzzles: Puzzle[]) {
     this.#puzzles = puzzles;
   }
 
-  shuffle() {
+  shuffle(): void {
     const shifts = [
       Puzzle.prototype.shiftDown,
       Puzzle.prototype.shiftUp,
@@ -248,18 +264,17 @@ class Shuffler {
   }
 }
 
-Shuffler.SHIFTS_PER_SHUFFLE = 100;
-
 class Competition {
   /**
    * Draw the source picture that needs to be solved as part of the puzzle, in
    * either its active or inactive form. Returns image data for the picture
    * which is then referenced by each puzzle.
    */
-  static drawPicture(canvas, isActive) {
+  static drawPicture(canvas: HTMLCanvasElement, isActive: boolean): ImageData {
     const w = (canvas.width = Puzzle.getWidth());
     const h = (canvas.height = Puzzle.getHeight());
-    const ctx = canvas.getContext("2d");
+    const ctx = canvas.getContext("2d")!;
+    if (ctx === null) throw "Failed to get canvas context.";
     if (!isActive) {
       ctx.globalAlpha = 0.2;
     }
@@ -284,14 +299,14 @@ class Competition {
   /**
    * The two puzzles that make up the competition.
    */
-  #puzzle1;
-  #puzzle2;
+  #puzzle1: Puzzle;
+  #puzzle2: Puzzle;
 
   constructor(
-    pictureActiveCanvas,
-    pictureInactiveCanvas,
-    puzzle1Canvas,
-    puzzle2Canvas,
+    pictureActiveCanvas: HTMLCanvasElement,
+    pictureInactiveCanvas: HTMLCanvasElement,
+    puzzle1Canvas: HTMLCanvasElement,
+    puzzle2Canvas: HTMLCanvasElement,
   ) {
     const pictureActiveData = Competition.drawPicture(
       pictureActiveCanvas,
@@ -323,7 +338,7 @@ class Competition {
   /**
    * Stop the competition when one of the puzzles is solved.
    */
-  onPuzzleCompleted(incompletedPuzzle) {
+  onPuzzleCompleted(incompletedPuzzle: Puzzle): void {
     this.#isCompleted = true;
     incompletedPuzzle.draw(false);
   }
@@ -331,7 +346,7 @@ class Competition {
   /**
    * Shift the cards of each puzzle in response to the user's keyboard input.
    */
-  onKeyDown(event) {
+  onKeyDown(event: KeyboardEvent): void {
     if (this.#isCompleted === true) {
       return;
     }
@@ -366,10 +381,10 @@ class Competition {
 
 window.addEventListener("DOMContentLoaded", function () {
   const competition = new Competition(
-    document.querySelector("#pictureActive"),
-    document.querySelector("#pictureInactive"),
-    document.querySelector("#puzzle1"),
-    document.querySelector("#puzzle2"),
+    document.querySelector<HTMLCanvasElement>("#pictureActive")!,
+    document.querySelector<HTMLCanvasElement>("#pictureInactive")!,
+    document.querySelector<HTMLCanvasElement>("#puzzle1")!,
+    document.querySelector<HTMLCanvasElement>("#puzzle2")!,
   );
   window.addEventListener("keydown", function (event) {
     competition.onKeyDown(event);
